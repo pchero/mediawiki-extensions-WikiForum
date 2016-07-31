@@ -159,8 +159,12 @@ class WFThread extends ContextSource {
 	 * @param int|boolean $reply: Optional: Reply to scroll to (through url #fragment)
 	 * @return string: HTML the link
 	 */
-	function showLink( $reply = false ) {
-		return '<a href="' . $this->getURL() . '">' . $this->getName() . '</a>';
+	function showLink( $reply = false, $len = 0 ) {
+        $title = $this->getName();
+        if($len > 0) {
+            $title = substr($this->getName(),0,$len).'...';
+        }
+		return '<a href="' . $this->getURL() . '">' . $title . '</a>';
 	}
 
 	/**
@@ -660,6 +664,39 @@ class WFThread extends ContextSource {
 	 * @return string
 	 */
 	private function showListItemMain( $class, $extraInfo = '' ) {
+		$output = '<tr class="mw-wikiforum-';
+
+		if ( $this->isSticky() ) {
+			$output .= 'sticky';
+		} else {
+			$output .= 'normal';
+		}
+
+		$desc = '<p class="mw-wikiforum-thread">' . $this->getIcon() . $this->showLink() .
+			'<p class="mw-wikiforum-descr">' . $this->showPostedInfo() . $extraInfo . '</p></p>';
+
+		$output .= '">
+				<td class="mw-wikiforum-title">' . $desc . '</td>
+				<td class="mw-wikiforum-value">' . $this->getReplyCount() . '</td>
+				<td class="mw-wikiforum-value">' . $this->getViewCount() . '</td>
+				<td class="mw-wikiforum-value">' . $this->showLastPostInfo() . '</td>
+			</tr>';
+
+		return $output;
+	}
+
+	/**
+	 * Show an item (row) for a list (table), for this thread. Used on forum pages and the <WikiForumList> tag
+	 * Do not use. Use showListItem() and showTagListItem() below.
+	 *
+	 * @param extraInfo string: any extra information to show after the posted info
+	 * @return string
+	 */
+	public function showListItemPlain( $class, $extraInfo = '', $title_len=0 ) {
+//		$output = '<p class="mw-wikiforum-thread">' . $this->getIcon() . $this->showLink() . ' - ' . $this->showPostedInfo() . '</p>';
+        $output = '<p class="mw-wikiforum-thread">' . $this->getIcon() . $this->showLink(false, $title_len) . '[' . $this->getReplyCount(). ']' . '</p>';
+        return $output;
+        
 		$output = '<tr class="mw-wikiforum-';
 
 		if ( $this->isSticky() ) {

@@ -15,7 +15,84 @@ class WikiForumHooks {
 	public static function registerParserHooks( &$parser ) {
 		$parser->setHook( 'WikiForumList', 'WikiForumHooks::renderWikiForumList' );
 		$parser->setHook( 'WikiForumThread', 'WikiForumHooks::renderWikiForumThread' );
+        $parser->setHook( 'WikiForumListTheme', 'WikiForumHooks::renderWikiForumListTheme' );
 		return true;
+	}
+    
+    /**
+     */
+    public static function renderWikiForumListTheme( $input, $args, Parser $parser, $frame) {
+		$parser->getOutput()->addModuleStyles( 'ext.wikiForum' );
+
+		if ( !isset( $args['num'] ) ) {
+			$args['num'] = 5;
+		}
+        
+		if ( !isset( $args['cols'] ) ) {
+			$args['cols'] = 1;
+		}
+        
+        $title_len = 0;
+        if ( isset( $args['title_len'] ) ) {
+			$title_len = $args['title_len'];
+		}
+
+
+		$dbr = wfGetDB( DB_SLAVE );
+		$sqlThreads = $dbr->select(
+			array( 'wikiforum_threads' ),
+			array( '*' ),
+			array(),
+			__METHOD__,
+			array(
+				'ORDER BY' => 'wft_last_post_timestamp DESC',
+				'LIMIT' => intval( $args['num'] )
+			)
+		);
+        
+        $output = "<table cellspacing=\"0\" width=\"100%\" cellpadding=\"0\"><tr>";
+        $i = 0;
+        foreach ( $sqlThreads as $threadData ) {
+            
+            if($i >= $args['cols']) {
+                $output .= "</tr><tr>";
+                $i = 0;
+            }
+
+            $output .= "<td width=\"" . (100 / $args['cols']) . "%\">";
+            $thread = WFThread::newFromSQL( $threadData );
+			$output .= $thread->showListItemPlain(NULL, '', $title_len);
+            $output .= "</td>";
+            
+            $i++;
+        }
+        $output .= "</tr></table>";
+        
+        /*
+        for($i = 0; $i < ((count($sqlThreads) + 1) / $args['cols']); $i++) {
+            $output .= "<tr>";
+
+            for($j = 0; $j < $args['cols']; $j++) {
+                $output .= "<td>";
+                $thread = WFThread::newFromSQL( $sqlThreads[$i] );
+                $output .= $thread->showListItemPlain(NULL, '', $title_len);
+                $output .= "</td>";
+            }
+            
+            $output .= "</tr>";
+        }
+        $output .= "</table>";
+        */
+
+        /*
+        foreach ( $sqlThreads as $threadData ) {
+			$thread = WFThread::newFromSQL( $threadData );
+
+			$output .= $thread->showListItemPlain(NULL, '', $title_len);
+		}
+        */
+
+		return $output;
 	}
 
 	/**
