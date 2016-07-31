@@ -37,7 +37,6 @@ class WikiForumHooks {
 			$title_len = $args['title_len'];
 		}
 
-
 		$dbr = wfGetDB( DB_SLAVE );
 		$sqlThreads = $dbr->select(
 			array( 'wikiforum_threads' ),
@@ -68,30 +67,6 @@ class WikiForumHooks {
         }
         $output .= "</tr></table>";
         
-        /*
-        for($i = 0; $i < ((count($sqlThreads) + 1) / $args['cols']); $i++) {
-            $output .= "<tr>";
-
-            for($j = 0; $j < $args['cols']; $j++) {
-                $output .= "<td>";
-                $thread = WFThread::newFromSQL( $sqlThreads[$i] );
-                $output .= $thread->showListItemPlain(NULL, '', $title_len);
-                $output .= "</td>";
-            }
-            
-            $output .= "</tr>";
-        }
-        $output .= "</table>";
-        */
-
-        /*
-        foreach ( $sqlThreads as $threadData ) {
-			$thread = WFThread::newFromSQL( $threadData );
-
-			$output .= $thread->showListItemPlain(NULL, '', $title_len);
-		}
-        */
-
 		return $output;
 	}
 

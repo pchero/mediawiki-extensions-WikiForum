@@ -686,36 +686,15 @@ class WFThread extends ContextSource {
 	}
 
 	/**
-	 * Show an item (row) for a list (table), for this thread. Used on forum pages and the <WikiForumList> tag
+	 * Show an item (row) for a list (table), for this thread. Used on forum pages and the <WikiForumListTheme> tag
 	 * Do not use. Use showListItem() and showTagListItem() below.
 	 *
 	 * @param extraInfo string: any extra information to show after the posted info
 	 * @return string
 	 */
 	public function showListItemPlain( $class, $extraInfo = '', $title_len=0 ) {
-//		$output = '<p class="mw-wikiforum-thread">' . $this->getIcon() . $this->showLink() . ' - ' . $this->showPostedInfo() . '</p>';
-        $output = '<p class="mw-wikiforum-thread">' . $this->getIcon() . $this->showLink(false, $title_len) . '[' . $this->getReplyCount(). ']' . '</p>';
+        $output = '<p class="mw-wikiforum-thread" style="padding:0 0 0 0; margin: 0 0 0 0;">' . $this->getIcon() . $this->showLink(false, $title_len) . '[' . $this->getReplyCount(). ']' . '</p>';
         return $output;
-        
-		$output = '<tr class="mw-wikiforum-';
-
-		if ( $this->isSticky() ) {
-			$output .= 'sticky';
-		} else {
-			$output .= 'normal';
-		}
-
-		$desc = '<p class="mw-wikiforum-thread">' . $this->getIcon() . $this->showLink() .
-			'<p class="mw-wikiforum-descr">' . $this->showPostedInfo() . $extraInfo . '</p></p>';
-
-		$output .= '">
-				<td class="mw-wikiforum-title">' . $desc . '</td>
-				<td class="mw-wikiforum-value">' . $this->getReplyCount() . '</td>
-				<td class="mw-wikiforum-value">' . $this->getViewCount() . '</td>
-				<td class="mw-wikiforum-value">' . $this->showLastPostInfo() . '</td>
-			</tr>';
-
-		return $output;
 	}
 
 	/**
